@@ -1,0 +1,783 @@
+import string
+
+
+def addstudent():
+	def submitadd():
+
+		connStr = pypyodbc.connect('Driver={SQL Server};'
+								   'Server=UNIQUE1;'
+								   'Database=StudentManagementSystem;'
+								   'Trusted_Connection=yes;')
+		cursor = connStr.cursor()
+
+		StudentId = studentIdentry.get()
+		StudentName = studentnameentry.get()
+		FatherName = fathernameentry.get()
+		MotherName = mothernameentry.get()
+		DOB = dobentry.get()
+		MobileNo = mobilenoentry.get()
+		Address = addressentry.get()
+		DateofAdmission = doaentry.get()
+		AadharNo = aadharnoentry.get()
+		PreSchoolName = previousschoolentry.get()
+		ClassofAdmission = coaentry.get()
+
+
+
+		cursor.query = "insert into Tbl_student ([StudentId],[StudentName],[FatherName],[MotherName],[DOB],[MobileNo],[Address],[DateofAdmission],[AadharNo],[PreSchoolName],[ClassofAdmission]) values (?,?,?,?,?,?,?,?,?,?,?)"
+		cursor.data = [( studentIdentry.get(),studentnameentry.get(),
+						fathernameentry.get(),mothernameentry.get(),
+						dobentry.get(),mobilenoentry.get(),
+						addressentry.get(),doaentry.get(),
+						aadharnoentry.get(),previousschoolentry.get()
+						,coaentry.get() )]
+		cursor.executemany(cursor.query, cursor.data)
+		connStr.commit()
+		res = messagebox.askyesnocancel('Notification','StudentId {} added Successfully'.format(studentIdval),parent=addroot)
+		if(res==True):
+			cursor.data = [(studentIdval.set(''), studentnameval.set(''),
+							fathernameval.set(''), mothernameval.set(''),
+							dobval.set(''), mobilenoval.set(''),
+							addressval.set(''), doaval.set(''),
+							aadharnoval.set(''), previousschoolval.set(''),
+							coaval.set(''))]
+		else:
+			messagebox.showerror('StudentId Already Exist Try another Id',parent=addroot)
+		str = 'select * from Tbl_Student'
+		cursor.execute(str)
+		datas = cursor.fetchall()
+		studenttable.delete(*studenttable.get_children())
+		for i in datas:
+			vv = [i[0], i[1], i[2], i[3], i[4], i[5], i[6], i[7], i[8]]
+			studenttable.insert('',END,values=vv)
+
+		cursor.close()
+		connStr.close()
+
+
+
+
+	addroot = Toplevel(master=DataEntryFrame)
+	addroot.grab_set()
+	addroot.geometry('850x800+520+500')
+	addroot.title('Student Management System')
+	addroot.config(bg='blue')
+	addroot.iconbitmap('Student1.ico')
+	addroot.resizable(False,False)
+
+	scroll_x = Scrollbar(addroot, orient=HORIZONTAL)
+	scroll_y = Scrollbar(addroot, orient=VERTICAL)
+
+	scroll_x.pack(side=BOTTOM, fill=X)
+	scroll_y.pack(side=RIGHT, fill=Y)
+
+
+
+
+	##---------------------------------------------------- Add student Labels
+
+
+	idlabel = Label(addroot,text='ADMISSION FORM',bg='gold2',font=('arial',20,'bold'),relief=GROOVE,borderwidth=4,width=15,anchor='w')
+	idlabel.place(x=210,y=10)
+
+	studentId = Label(addroot, text='Enter Id :', bg='gold2', font=('arial', 16, 'italic bold'), relief=GROOVE,
+					borderwidth=3, width=22, anchor='w')
+	studentId.place(x=15,y=65)
+
+	studentnamelabel = Label(addroot, text='Enter Student Name :', bg='gold2', font=('arial', 16, 'italic bold'), relief=GROOVE,
+					borderwidth=3, width=22, anchor='w')
+	studentnamelabel.place(x=15, y=115)
+
+	fathernamelabel = Label(addroot, text='Name of the Father :', bg='gold2', font=('arial', 16, 'italic bold'), relief=GROOVE,
+					borderwidth=3, width=22, anchor='w')
+	fathernamelabel.place(x=15, y=165)
+
+	mothernamelabel = Label(addroot, text='Name of the Mother :', bg='gold2', font=('arial', 16, 'italic bold'), relief=GROOVE,
+					borderwidth=3, width=22, anchor='w')
+	mothernamelabel.place(x=15, y=215)
+
+	doblabel = Label(addroot, text='Date of Birth :', bg='gold2', font=('arial', 16, 'italic bold'), relief=GROOVE,
+					borderwidth=3, width=22, anchor='w')
+	doblabel.place(x=15, y=265)
+
+	mobilelabel = Label(addroot, text='Mobile No :', bg='gold2', font=('arial', 16, 'italic bold'), relief=GROOVE,
+					borderwidth=3, width=22, anchor='w')
+	mobilelabel.place(x=15, y=315)
+
+	addresslabel = Label(addroot, text='Full Address :', bg='gold2', font=('arial', 16, 'italic bold'), relief=GROOVE,
+					borderwidth=3, width=22, anchor='w')
+	addresslabel.place(x=15, y=365)
+
+	doalabel = Label(addroot, text='Date of Admission :', bg='gold2', font=('arial', 16, 'italic bold'), relief=GROOVE,
+					borderwidth=3, width=22, anchor='w')
+	doalabel.place(x=15, y=415)
+
+	aadharnolabel = Label(addroot, text='Aadhar Card No :', bg='gold2',
+					font=('arial', 16, 'italic bold'), relief=GROOVE,
+					borderwidth=3, width=22, anchor='w')
+	aadharnolabel.place(x=15, y=465)
+
+	previousschoollabel = Label(addroot, text='School&Class from which'"\n"'the pupil has come :', bg='gold2', font=('arial', 16, 'italic bold'), relief=GROOVE,
+					borderwidth=3, width=22, anchor='w')
+	previousschoollabel.place(x=15, y=515)
+
+	coalabel = Label(addroot, text='Class in which the'"\n"'admission is sought :', bg='gold2',
+					font=('arial', 16, 'italic bold'), relief=GROOVE,
+					borderwidth=3, width=22, anchor='w')
+	coalabel.place(x=15, y=595)
+
+	#------------------------------------------------------- Add Student Entry
+
+	studentIdval = StringVar()
+	studentnameval = StringVar()
+	fathernameval = StringVar()
+	mothernameval = StringVar()
+	dobval = StringVar()
+	mobilenoval = StringVar()
+	addressval = StringVar()
+	doaval = StringVar()
+	aadharnoval = StringVar()
+	previousschoolval = StringVar()
+	coaval = StringVar()
+
+
+
+	studentIdentry = Entry(addroot,font=('arial',14,'bold'),bd=4,width=40,textvariable=studentIdval)
+	studentIdentry.place(x=340,y=64)
+
+	studentnameentry = Entry(addroot, font=('arial', 14, 'bold'), bd=4, width=40, textvariable=studentnameval)
+	studentnameentry.place(x=340, y=114)
+
+	fathernameentry = Entry(addroot, font=('arial', 14, 'bold'), bd=4, width=40, textvariable=fathernameval)
+	fathernameentry.place(x=340, y=164)
+
+	mothernameentry = Entry(addroot, font=('arial', 14, 'bold'), bd=4, width=40, textvariable=mothernameval)
+	mothernameentry.place(x=340, y=214)
+
+	dobentry = Entry(addroot, font=('arial', 14, 'bold'), bd=4, width=40, textvariable=dobval)
+	dobentry.place(x=340, y=264)
+
+	mobilenoentry = Entry(addroot, font=('arial', 14, 'bold'), bd=4, width=40, textvariable=mobilenoval)
+	mobilenoentry.place(x=340, y=314)
+
+	addressentry = Entry(addroot, font=('arial', 14, 'bold'), bd=4, width=40, textvariable=addressval)
+	addressentry.place(x=340, y=364)
+
+	doaentry = Entry(addroot, font=('arial', 14, 'bold'), bd=4, width=40, textvariable=doaval)
+	doaentry.place(x=340, y=414)
+
+	aadharnoentry = Entry(addroot, font=('arial', 14, 'bold'), bd=4, width=40, textvariable=aadharnoval)
+	aadharnoentry.place(x=340, y=464)
+
+	previousschoolentry = Entry(addroot, font=('arial', 14, 'bold'), bd=4, width=40, textvariable=previousschoolval)
+	previousschoolentry.place(x=340, y=524)
+
+	coaentry = Entry(addroot, font=('arial', 14, 'bold'), bd=4, width=40, textvariable=coaval)
+	coaentry.place(x=340, y=604)
+	#------------------------------------------------------- Add Submit Button
+	submitbutton = Button(addroot, text='Submit', font=('arial', 15, 'bold'), width=10, bg='gold2', bd=4,
+						  activebackground='blue', activeforeground='white', command=submitadd)
+	submitbutton.place(x=310, y=655)
+
+	#			  "VALUES('1','raj','ram','rani','20/01/2000','999999999','sdfdsfsfd','10/10/100','55555555','uuuuuuu','4');")
+		#		  "VALUES("+id1entry,id2entry,id3entry,id4entry,id5entry,id6entry,id7entry,id8entry,id9entry,id10entry,id11entry+")";"")" 																															"
+	#	VALUES=(id1entry,id2entry,id3entry,id4entry,id5entry,id6entry,id7entry,id8entry,id9entry,id10entry,id11entry)
+
+
+	#values = (id1val.,id2val.get(),id3val.get(),id4val.get(),id5val.get(),id6val.get() ,id7val.get() ,id8val.get() ,id9val,id10val.get(),id11val.get() );
+
+	addroot.mainloop()
+def searchstudent():
+	def Search():
+
+		connStr = pyodbc.connect('Driver={SQL Server};'
+								   'Server=UNIQUE1;'
+								   'Database=StudentManagementSystem;'
+								   'Trusted_Connection=yes;')
+		cursor = connStr.cursor()
+		StudentId = studentIdval.get()
+		StudentName = studentnameentry.get()
+		FatherName = fathernameentry.get()
+		MotherName = mothernameentry.get()
+		DOB = dobentry.get()
+		MobileNo = mobilenoentry.get()
+
+
+		if(StudentId != ''):
+
+			sql = '''select * from Tbl_Student where StudentId = ?'''
+			var = StudentId
+			cursor.execute(sql,[var])
+			records = cursor.fetchall()
+			studenttable.delete(*studenttable.get_children())
+			for i in records:
+				vv = [i[0],i[1], i[2], i[3], i[4], i[5], i[6], i[7], i[8]]
+				studenttable.insert('', END, values=vv)
+			connStr.commit()
+			if cursor.execute(sql, [var]) == True:
+				print("Search Successful")
+
+			#else:
+				#res = messagebox.showerror('Notification',"No Such StudentId Exists",parent=searchroot)
+
+
+		if (StudentName != ''):
+
+			sql = '''select * from Tbl_Student where StudentName = ?'''
+			var = StudentName
+			cursor.execute(sql, [var])
+			records = cursor.fetchall()
+			studenttable.delete(*studenttable.get_children())
+			for i in records:
+				vv = [i[0], i[1], i[2], i[3], i[4], i[5], i[6], i[7], i[8]]
+				studenttable.insert('', END, values=vv)
+			connStr.commit()
+			if cursor.execute(sql, [var]) == True:
+				print("Search Successful")
+
+			#else:
+				#res = messagebox.showerror("No Such StudentName Exists", parent=searchroot)
+
+		if (FatherName != ''):
+
+			sql = '''select * from Tbl_Student where FatherName = ?'''
+			var = FatherName
+			cursor.execute(sql, [var])
+			records = cursor.fetchall()
+			studenttable.delete(*studenttable.get_children())
+			for i in records:
+				vv = [i[0], i[1], i[2], i[3], i[4], i[5], i[6], i[7], i[8]]
+				studenttable.insert('', END, values=vv)
+			connStr.commit()
+			if cursor.execute(sql, [var]) == True:
+				print("Search Successful")
+				flag = 1
+			#else:
+				#res = messagebox.showerror("No Such FatherName Exists", parent=searchroot)
+				#flag = 0
+
+		if (MotherName != ''):
+
+			sql = '''select * from Tbl_Student where MotherName = ?'''
+			var = MotherName
+			cursor.execute(sql, [var])
+			records = cursor.fetchall()
+			studenttable.delete(*studenttable.get_children())
+			for i in records:
+				vv = [i[0], i[1], i[2], i[3], i[4], i[5], i[6], i[7], i[8]]
+				studenttable.insert('', END, values=vv)
+			connStr.commit()
+			if cursor.execute(sql, [var]) == True:
+				print("Search Successful")
+				flag = 1
+			#else:
+				#res = messagebox.showerror("No Such FatherName Exists", parent=searchroot)
+				#flag = 0
+
+		if (DOB != ''):
+
+			sql = '''select * from Tbl_Student where DOB = ?'''
+			var = DOB
+			cursor.execute(sql, [var])
+			records = cursor.fetchall()
+			studenttable.delete(*studenttable.get_children())
+			for i in records:
+				vv = [i[0], i[1], i[2], i[3], i[4], i[5], i[6], i[7], i[8]]
+				studenttable.insert('', END, values=vv)
+			connStr.commit()
+			if cursor.execute(sql, [var]) == True:
+				print("Search Successful")
+				flag = 1
+			#else:
+				#res = messagebox.showerror("No Such FatherName Exists", parent=searchroot)
+				#flag = 0
+
+		if (MobileNo != ''):
+
+			sql = '''select * from Tbl_Student where MobileNo = ?'''
+			var = MobileNo
+			cursor.execute(sql, [var])
+			records = cursor.fetchall()
+			studenttable.delete(*studenttable.get_children())
+			for i in records:
+				vv = [i[0], i[1], i[2], i[3], i[4], i[5], i[6], i[7], i[8]]
+				studenttable.insert('', END, values=vv)
+			connStr.commit()
+			if cursor.execute(sql, [var]) == True:
+				print("Search Successful")
+
+			#else:
+				#res = messagebox.showerror("No Such FatherName Exists", parent=searchroot)
+				#flag = 0
+
+
+
+
+	searchroot = Toplevel(master=DataEntryFrame)
+	searchroot.grab_set()
+	searchroot.geometry('800x500+220+200')
+	searchroot.title('Student Management System')
+	searchroot.config(bg='blue')
+	searchroot.iconbitmap('Student1.ico')
+	searchroot.resizable(False, False)
+
+	##---------------------------------------------------- Add student Labels
+
+	studentIdlabel = Label(searchroot, text='Enter Id :', bg='gold2', font=('arial', 16, 'italic bold'), relief=GROOVE,
+					 borderwidth=3, width=22, anchor='w')
+	studentIdlabel.place(x=15, y=65)
+
+	studentnamelabel = Label(searchroot, text='Enter Student Name :', bg='gold2', font=('arial', 16, 'italic bold'), relief=GROOVE,
+					 borderwidth=3, width=22, anchor='w')
+	studentnamelabel.place(x=15, y=115)
+
+	fathernamelabel = Label(searchroot, text='Name of the Father :', bg='gold2', font=('arial', 16, 'italic bold'), relief=GROOVE,
+					 borderwidth=3, width=22, anchor='w')
+	fathernamelabel.place(x=15, y=165)
+
+	mothernamelabel = Label(searchroot, text='Name of the Mother :', bg='gold2', font=('arial', 16, 'italic bold'), relief=GROOVE,
+					 borderwidth=3, width=22, anchor='w')
+	mothernamelabel.place(x=15, y=215)
+
+	doalabel = Label(searchroot, text='Date of Birth :', bg='gold2', font=('arial', 16, 'italic bold'), relief=GROOVE,
+					 borderwidth=3, width=22, anchor='w')
+	doalabel.place(x=15, y=265)
+
+	mobilenolabel = Label(searchroot, text='Mobile No :', bg='gold2', font=('arial', 16, 'italic bold'), relief=GROOVE,
+					 borderwidth=3, width=22, anchor='w')
+	mobilenolabel.place(x=15, y=315)
+	# ------------------------------------------------------- Add Student Entry
+	studentIdval = StringVar()
+	studentnameval = StringVar()
+	fathernameval = StringVar()
+	mothernameval = StringVar()
+	dobval = StringVar()
+	mobilenoval = StringVar()
+
+
+	studentIdentry = Entry(searchroot, font=('arial', 14, 'bold'), bd=4, width=40, textvariable=studentIdval)
+	studentIdentry.place(x=340, y=64)
+
+	studentnameentry = Entry(searchroot, font=('arial', 14, 'bold'), bd=4, width=40, textvariable=studentnameval)
+	studentnameentry.place(x=340, y=114)
+
+	fathernameentry = Entry(searchroot, font=('arial', 14, 'bold'), bd=4, width=40, textvariable=fathernameval)
+	fathernameentry.place(x=340, y=164)
+
+	mothernameentry = Entry(searchroot, font=('arial', 14, 'bold'), bd=4, width=40, textvariable=mothernameval)
+	mothernameentry.place(x=340, y=214)
+
+	dobentry = Entry(searchroot, font=('arial', 14, 'bold'), bd=4, width=40, textvariable=dobval)
+	dobentry.place(x=340, y=264)
+
+	mobilenoentry = Entry(searchroot, font=('arial', 14, 'bold'), bd=4, width=40, textvariable=mobilenoval)
+	mobilenoentry.place(x=340, y=314)
+
+
+	# ------------------------------------------------------- Add Submit Button
+	submitbutton = Button(searchroot, text='Search', font=('arial', 15, 'bold'), width=15, bg='gold2', bd=4,
+						  activebackground='blue', activeforeground='white', command=Search)
+	submitbutton.place(x=310, y=384)
+
+	searchroot.mainloop()
+def updatestudent():
+	def Update():
+		connStr = pypyodbc.connect('Driver={SQL Server};'
+								   'Server=UNIQUE1;'
+								   'Database=StudentManagementSystem;'
+								   'Trusted_Connection=yes;')
+		cursor = connStr.cursor()
+
+		StudentId = studentIdentry.get()
+		StudentName = studentnameentry.get()
+		FatherName = fathernameentry.get()
+		MotherName = mothernameentry.get()
+		DOB = dobentry.get()
+		MobileNo = mobilenoentry.get()
+		Address = addressentry.get()
+		DateofAdmission = doaentry.get()
+		AadharNo = aadharnoentry.get()
+		PreSchoolName = previousschoolentry.get()
+		ClassofAdmission = coaentry.get()
+
+		cursor.query = 'Update Tbl_student set ([StudentId],[StudentName],[FatherName],[MotherName],[DOB],[MobileNo],[Address],[DateofAdmission],[AadharNo],[PreSchoolName],[ClassofAdmission]) values (?,?,?,?,?,?,?,?,?,?,?)'
+		cursor.data = [(studentIdentry.get(), studentnameentry.get(),
+						fathernameentry.get(), mothernameentry.get(),
+						dobentry.get(), mobilenoentry.get(),
+						addressentry.get(), doaentry.get(),
+						aadharnoentry.get(), previousschoolentry.get(),
+						coaentry.get())]
+		cursor.executemany(cursor.query, cursor.data)
+		connStr.commit()
+		#res = messagebox.askyesnocancel('Notification', 'StudentId {} added Successfully'.format(studentIdval),
+										#parent=addroot)
+
+		str = 'select * from Tbl_Student'
+		cursor.execute(str)
+		datas = cursor.fetchall()
+		studenttable.delete(*studenttable.get_children())
+		for i in datas:
+			vv = [i[0], i[1], i[2], i[3], i[4], i[5], i[6], i[7], i[8], i[9], i[10]]
+			studenttable.insert('',END,values=vv)
+		cursor.close()
+		connStr.close()
+	updateroot = Toplevel(master=DataEntryFrame)
+	updateroot.grab_set()
+	updateroot.geometry('800x700+520+500')
+	updateroot.title('Student Management System')
+	updateroot.config(bg='blue')
+	updateroot.iconbitmap('Student1.ico')
+	updateroot.resizable(False, False)
+
+	##---------------------------------------------------- Add student Labels
+
+	studentIdlabel = Label(updateroot, text='Update Id :', bg='gold2', font=('arial', 16, 'italic bold'), relief=GROOVE,
+					 borderwidth=3, width=22, anchor='w')
+	studentIdlabel.place(x=15, y=65)
+
+	studentnamelabel = Label(updateroot, text='Update Student Name :', bg='gold2', font=('arial', 16, 'italic bold'), relief=GROOVE,
+					 borderwidth=3, width=22, anchor='w')
+	studentnamelabel.place(x=15, y=115)
+
+	fathernamelabel = Label(updateroot, text='Update Father Name :', bg='gold2', font=('arial', 16, 'italic bold'), relief=GROOVE,
+					 borderwidth=3, width=22, anchor='w')
+	fathernamelabel.place(x=15, y=165)
+
+	mothernamelabel = Label(updateroot, text='Update Mother Name :', bg='gold2', font=('arial', 16, 'italic bold'), relief=GROOVE,
+					 borderwidth=3, width=22, anchor='w')
+	mothernamelabel.place(x=15, y=215)
+
+	doblabel = Label(updateroot, text='Update D.O.B :', bg='gold2', font=('arial', 16, 'italic bold'), relief=GROOVE,
+					 borderwidth=3, width=22, anchor='w')
+	doblabel.place(x=15, y=265)
+
+	mobilenolabel = Label(updateroot, text='Update Mobile No :', bg='gold2', font=('arial', 16, 'italic bold'), relief=GROOVE,
+					 borderwidth=3, width=22, anchor='w')
+	mobilenolabel.place(x=15, y=315)
+
+	addresslabel = Label(updateroot, text='Update Address :', bg='gold2', font=('arial', 16, 'italic bold'), relief=GROOVE,
+					 borderwidth=3, width=22, anchor='w')
+	addresslabel.place(x=15, y=365)
+
+	doalabel = Label(updateroot, text='Update D.O.A :', bg='gold2', font=('arial', 16, 'italic bold'), relief=GROOVE,
+					 borderwidth=3, width=22, anchor='w')
+	doalabel.place(x=15, y=415)
+
+	aadharnolabel = Label(updateroot, text='Update Aadhar  :', bg='gold2',
+					 font=('arial', 16, 'italic bold'), relief=GROOVE,
+					 borderwidth=3, width=22, anchor='w')
+	aadharnolabel.place(x=15, y=465)
+
+	previousschoollabel = Label(updateroot, text='School&Class from which'"\n"'the pupil has come :', bg='gold2',
+					  font=('arial', 16, 'italic bold'), relief=GROOVE,
+					  borderwidth=3, width=22, anchor='w')
+	previousschoollabel.place(x=15, y=515)
+
+	coalabel = Label(updateroot, text='Class in which the'"\n"'admission is sought :', bg='gold2',
+					  font=('arial', 16, 'italic bold'), relief=GROOVE,
+					  borderwidth=3, width=22, anchor='w')
+	coalabel.place(x=15, y=595)
+
+	# ------------------------------------------------------- Add Student Entry
+
+	studentIdval = StringVar()
+	studentnameval = StringVar()
+	fathernameval = StringVar()
+	mothernameval = StringVar()
+	dobval = StringVar()
+	mobilenoval = StringVar()
+	addressval = StringVar()
+	doaval = StringVar()
+	aadharnoval = StringVar()
+	previousschoolval = StringVar()
+	coaval = StringVar()
+
+	studentIdentry = Entry(updateroot, font=('arial', 14, 'bold'), bd=4, width=40, textvariable=studentIdval)
+	studentIdentry.place(x=340, y=64)
+
+	studentnameentry = Entry(updateroot, font=('arial', 14, 'bold'), bd=4, width=40, textvariable=studentnameval)
+	studentnameentry.place(x=340, y=114)
+
+	fathernameentry = Entry(updateroot, font=('arial', 14, 'bold'), bd=4, width=40, textvariable=fathernameval)
+	fathernameentry.place(x=340, y=164)
+
+	mothernameentry = Entry(updateroot, font=('arial', 14, 'bold'), bd=4, width=40, textvariable=mothernameval)
+	mothernameentry.place(x=340, y=214)
+
+	dobentry = Entry(updateroot, font=('arial', 14, 'bold'), bd=4, width=40, textvariable=dobval)
+	dobentry.place(x=340, y=264)
+
+	mobilenoentry = Entry(updateroot, font=('arial', 14, 'bold'), bd=4, width=40, textvariable=mobilenoval)
+	mobilenoentry.place(x=340, y=314)
+
+	addressentry = Entry(updateroot, font=('arial', 14, 'bold'), bd=4, width=40, textvariable=addressval)
+	addressentry.place(x=340, y=364)
+
+	doaentry = Entry(updateroot, font=('arial', 14, 'bold'), bd=4, width=40, textvariable=doaval)
+	doaentry.place(x=340, y=414)
+
+	aadharnoentry = Entry(updateroot, font=('arial', 14, 'bold'), bd=4, width=40, textvariable=aadharnoval)
+	aadharnoentry.place(x=340, y=464)
+
+	previousschoolentry = Entry(updateroot, font=('arial', 14, 'bold'), bd=4, width=40, textvariable=previousschoolval)
+	previousschoolentry.place(x=340, y=524)
+
+	coaentry = Entry(updateroot, font=('arial', 14, 'bold'), bd=4, width=40, textvariable=coaval)
+	coaentry.place(x=340, y=604)
+	# ------------------------------------------------------- Add Submit Button
+	submitbutton = Button(updateroot, text='Update', font=('arial', 15, 'bold'), width=10, bg='gold2', bd=4,
+						  activebackground='blue', activeforeground='white', command=Update)
+	submitbutton.place(x=310, y=655)
+	cc = studenttable.focus()
+	content = studenttable.item(cc)
+	pp = content['values']
+	if (len(pp) != 0):
+		studentIdval.set(pp[0]),
+		studentnameval.set(pp[1]),
+		fathernameval.set(pp[2]),
+		mothernameval.set(pp[3]),
+		dobval.set(pp[4]),
+		mobilenoval.set(pp[5]),
+		addressval.set(pp[6]),
+		doaval.set(pp[7]),
+		aadharnoval.set(pp[8]),
+		#previousschoolval.set(pp[9]),
+		#coaval.set(pp[10])
+	updateroot.mainloop()
+def deletestudent():
+	connStr = pyodbc.connect('Driver={SQL Server};'
+							 'Server=UNIQUE1;'
+							 'Database=StudentManagementSystem;'
+							 'Trusted_Connection=yes;')
+	cursor = connStr.cursor()
+	cc = studenttable.focus()
+	content = studenttable.item(cc)
+	pp = content['values']
+	sql ='''delete from Tbl_Student where StudentId =?'''
+	cursor.execute(sql)
+	connStr.commit()
+	messagebox.showerror('Notification', 'Id {} deleted Succesfully..'.format(pp))
+	str = 'select * from Tbl_Student'
+	cursor.execute(str)
+	datas = cursor.fetchall()
+	studenttable.delete(*studenttable.get_children())
+	for i in datas:
+		vv = [i[0], i[1], i[2], i[3], i[4], i[5], i[6], i[7], i[8], i[9], i[10]]
+		studenttable.insert('', END, values=vv)
+	connStr.close()
+
+
+def showallstudent():
+	connStr = pyodbc.connect('Driver={SQL Server};'
+							 'Server=UNIQUE1;'
+							 'Database=StudentManagementSystem;'
+							 'Trusted_Connection=yes;')
+	cursor = connStr.cursor()
+	str = 'select * from Tbl_Student'
+	cursor.execute(str)
+	datas = cursor.fetchall()
+	studenttable.delete(*studenttable.get_children())
+	for i in datas:
+		vv = [i[0], i[1], i[2], i[3], i[4], i[5], i[6], i[7], i[8], i[9], i[10]]
+		studenttable.insert('', END, values=vv)
+def exportstudent():
+	print('Student Details Exported')
+def exit():
+	res = messagebox.askyesnocancel('Notification','Do you want to exit?')
+	if(res == True):
+		root.destroy()
+##################################################connection of Database
+def Connectdb():
+	def submitdb():
+		global conn,mycursor
+		host = hostval.get()
+		user = usernameval.get()
+		password = passwordval.get()
+		try:
+			conn = pyodbc.connect('Driver={SQL Server};'
+                      'Server=UNIQUE1;'
+                      'Database=StudentManagementSystem;'
+                      'Trusted_Connection=yes;')
+			cursor = conn.cursor()
+			#cursor.execute('Select * from Tbl_Student')
+		except:
+			messagebox.showerror('Notifications','Data is Incorrect please try again')
+			return
+
+
+
+	dbroot = Toplevel()
+	dbroot.grab_set()
+	dbroot.geometry('470x250+800+230')
+	dbroot.iconbitmap('Student1.ico')
+	dbroot.resizable(False,False)
+	dbroot.config(bg='blue')
+	#--------------------------------------Connectdb Labels
+	hostlabel = Label(dbroot,text="Enter Host:",bg='gold2',font=('times',20,'bold'),relief=GROOVE,borderwidth=3,width=13,anchor='w')
+	hostlabel.place(x=10,y=10)
+
+	usernamelabel = Label(dbroot, text="Enter Username:", bg='gold2', font=('times', 20, 'bold'), relief=GROOVE, borderwidth=3,
+					width=13, anchor='w')
+	usernamelabel.place(x=10, y=70)
+
+	passwordlabel = Label(dbroot, text="Enter Password:", bg='gold2', font=('times', 20, 'bold'), relief=GROOVE, borderwidth=3,
+					width=13, anchor='w')
+	passwordlabel.place(x=10, y=130)
+
+	#--------------------------------------------Connectdb Entry
+	hostval = StringVar()
+	usernameval = StringVar()
+	passwordval = StringVar()
+
+	hostentry = Entry(dbroot,font=('roman',15,'bold'),bd=5,textvariable=hostval)
+	hostentry.place(x=250,y=10)
+
+	usernameentry = Entry(dbroot, font=('roman', 15, 'bold'), bd=5, textvariable=usernameval)
+	usernameentry.place(x=250, y=70)
+
+	passwordentry = Entry(dbroot, font=('roman', 15, 'bold'), bd=5, textvariable=passwordval)
+	passwordentry.place(x=250, y=130)
+
+	#-----------------------------------------Connectdb Button
+	submitbutton = Button(dbroot,text='Submit',font=('arial',15,'bold'),width=15,bg='gold2',bd=4, activebackground='blue',activeforeground='white',command=submitdb())
+	submitbutton.place(x=150,y=190)
+
+	dbroot.mainloop()
+####################################################
+def tick():
+	time_string = time.strftime("%H:%M:%S")
+	date_string = time.strftime("%d/%m/%Y")
+	clock.config(text='Date : '+date_string+"\n"+"Time : "+time_string)
+################################################# INTRO SLIDER
+import random
+colors = ['red','green','blue','yellow','pink','red2','gold2']
+def IntroLabelColorTick():
+	fg = random.choice(colors)
+	SliderLabel.config(fg=fg)
+	SliderLabel.after(20,IntroLabelColorTick)
+
+def IntroLabelTick():
+	global count,text
+	if(count>=len(ss)):
+		count = 0
+		text = ''
+		SliderLabel.config(text=text)
+	else:
+		text = text+ss[count]
+		SliderLabel.config(text=text)
+		count += 1
+	SliderLabel.after(420,IntroLabelTick)
+############################################################
+from tkinter import*
+from tkinter import Toplevel,messagebox
+from tkinter.ttk import Treeview
+from tkinter import ttk
+import pyodbc
+import pypyodbc
+import time
+root=Tk()
+root.title('Student Management System')
+root.config(bg='gold2')
+root.geometry('1174x700+200+50')
+root.iconbitmap('Student1.ico')
+root.resizable(False,False)
+########################################################################## Frames
+#---------------------------------------------------------dataentry frame
+DataEntryFrame = Frame(root,bg='gold2',relief=GROOVE,borderwidth=5)
+DataEntryFrame.place(x=10,y=80,width=500,height=600)
+frontlabel = Label(DataEntryFrame,text='----------------------Welcome--------------------',width=33,font=('arial',22,'italic bold'),bg='gold2')
+frontlabel.pack(side=TOP,expand=True)
+addbtn =Button(DataEntryFrame,text = '1. Add Student',width=15,font=('arial',18,'bold'),bd=5,bg='skyblue3',activebackground='blue',
+			   relief=RIDGE,activeforeground='white',command=addstudent)
+addbtn.pack(side=TOP,expand=True)
+
+searchbtn =Button(DataEntryFrame,text = '2. Search Student',width=15,font=('arial',18,'bold'),bd=5,bg='skyblue3',activebackground='blue',
+			   relief=RIDGE,activeforeground='white',command=searchstudent)
+searchbtn.pack(side=TOP,expand=True)
+
+updatebtn =Button(DataEntryFrame,text = '3. Update Student',width=15,font=('arial',18,'bold'),bd=5,bg='skyblue3',activebackground='blue',
+			   relief=RIDGE,activeforeground='white',command=updatestudent)
+updatebtn.pack(side=TOP,expand=True)
+
+deletebtn =Button(DataEntryFrame,text = '4. Delete Student',width=15,font=('arial',18,'bold'),bd=5,bg='skyblue3',activebackground='blue',
+			   relief=RIDGE,activeforeground='white',command=deletestudent)
+deletebtn.pack(side=TOP,expand=True)
+
+showallbtn =Button(DataEntryFrame,text = '5. Show All ',width=15,font=('arial',18,'bold'),bd=5,bg='skyblue3',activebackground='blue',
+			   relief=RIDGE,activeforeground='white',command=showallstudent)
+showallbtn.pack(side=TOP,expand=True)
+
+exportbtn =Button(DataEntryFrame,text = '6. Export Data',width=15,font=('arial',18,'bold'),bd=5,bg='skyblue3',activebackground='blue',
+			   relief=RIDGE,activeforeground='white',command=exportstudent)
+exportbtn.pack(side=TOP,expand=True)
+
+exitbtn =Button(DataEntryFrame,text = '7. Exit',width=15,font=('arial',18,'bold'),bd=5,bg='skyblue3',activebackground='blue',
+			   relief=RIDGE,activeforeground='white',command=exit)
+exitbtn.pack(side=TOP,expand=True)
+
+
+
+ShowDataFrame = Frame(root,bg='white',relief=GROOVE,borderwidth=5)
+ShowDataFrame.place(x=550,y=80,width=620,height=600)
+
+##-------------------------------------------------------Show Data Frame
+style = ttk.Style()
+style.configure('Treeview.Heading',font=('verdana',11,'bold'),foreground='black')
+style.configure('Treeview',font=('arial',10,'bold'),background='cyan',foreground='black')
+scroll_x = Scrollbar(ShowDataFrame,orient=HORIZONTAL)
+scroll_y = Scrollbar(ShowDataFrame,orient=VERTICAL)
+studenttable = Treeview(ShowDataFrame,columns=('Student Id','Student Name','Father Name','Mother Name','D.O.B','Mobile No','Address','D.O.A','Aadhar No','PreSchoolName','ClassofAdmission'),
+			yscrollcommand=scroll_y.set,xscrollcommand=scroll_x.set)
+scroll_x.pack(side=BOTTOM,fill=X)
+scroll_y.pack(side=RIGHT,fill=Y)
+scroll_x.config(command=studenttable.xview)
+scroll_y.config(command=studenttable.yview)
+studenttable.heading('Student Id',text='Student Id')
+studenttable.heading('Student Name',text='Student Name')
+studenttable.heading('Father Name',text='Father Name')
+studenttable.heading('Mother Name',text='Mother Name')
+studenttable.heading('D.O.B',text='D.O.B')
+studenttable.heading('Mobile No',text='Mobile No')
+studenttable.heading('Address',text='Address')
+studenttable.heading('D.O.A',text='D.O.A')
+studenttable.heading('Aadhar No',text='Aadhar No')
+studenttable.heading('PreSchoolName',text='PreSchoolName')
+studenttable.heading('ClassofAdmission',text='ClassofAdmission')
+studenttable['show'] = 'headings'
+studenttable.column('Student Id',width=100)
+studenttable.column('Student Name',width=250)
+studenttable.column('Father Name',width=250)
+studenttable.column('Mother Name',width=250)
+studenttable.column('D.O.B',width=100)
+studenttable.column('Mobile No',width=150)
+studenttable.column('Address',width=200)
+studenttable.column('D.O.A',width=120)
+studenttable.column('Aadhar No',width=150)
+studenttable.column('PreSchoolName',width=150)
+studenttable.column('ClassofAdmission',width=150)
+
+
+studenttable.pack(fill=BOTH,expand=1)
+
+
+
+################################################# Slider
+ss = 'UNIQUE HIGH SCHOOL'
+count = 0
+text = ''
+######################################
+SliderLabel = Label(root,text=ss,font=('verdana',18,'italic bold'),relief=RIDGE,borderwidth=5,width=35,bg='cyan')
+SliderLabel.place(x=260,y=0)
+IntroLabelTick()
+IntroLabelColorTick()
+#####################################################  clock
+clock = Label(root,font=('times',14,'bold'),relief=RIDGE,borderwidth=4,bg='lawn green')
+clock.place(x=0,y=0)
+tick()
+######################################################################ConnectDatabaseButton
+connectbutton = Button(root,text='Connect To Database',width=20,font=('arial',14,'bold'),relief=RIDGE,borderwidth=4,bd=6,bg='green2',
+			activebackground='blue',activeforeground='white',command=Connectdb)
+connectbutton.place(x=910,y=0)
+
+
+root.mainloop()
